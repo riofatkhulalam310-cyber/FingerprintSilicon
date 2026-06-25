@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SiliconFingerprint — Analisis Jejak Media AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <header class="masthead">
+      <div class="masthead__case">OSINT defensif · laporan analisis media</div>
+      <h1>SiliconFingerprint</h1>
+      <p>Unggah satu gambar atau video untuk membaca metadata, petunjuk generator AI, dan verifikasi kriptografis Content Credentials (C2PA). Hasilnya disertai batasan yang jujur, bukan tuduhan.</p>
+    </header>
+
+    <form action="{{ url_for('analyze') }}" method="post" enctype="multipart/form-data" id="intake-form">
+      <div class="intake" id="intake">
+        <div class="intake__icon">🔍</div>
+        <p style="margin:0;font-weight:600;">Tarik &amp; lepas file di sini, atau</p>
+        <label class="button" for="file-input">Pilih file</label>
+        <input type="file" name="file" id="file-input" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.tiff,.mp4,.mov,.mkv,.webm">
+        <span class="intake__filename" id="filename-display"></span>
+        <div>
+          <button type="submit" class="intake__submit">Analisis file</button>
+        </div>
+        <p class="intake__hint">Gambar &amp; video umum didukung · maks 50&nbsp;MB · file tidak disimpan setelah analisis selesai</p>
+      </div>
+    </form>
+
+    {% if error %}
+      <div class="error-banner">{{ error }}</div>
+    {% endif %}
+
+    {% if result %}
+      <section class="report">
+        <div class="report__file-block">
+          <dl class="report__meta">
+            <dt>Nama file</dt>
+            <dd>{{ result.file_name }}</dd>
+            <dt>Ukuran</dt>
+            <dd>{{ "%.1f"|format(result.size_bytes / 1024) }} KB</dd>
+            <dt>MIME</dt>
+            <dd>{{ result.mime_guess }}</dd>
+            <dt>SHA-256</dt>
+            <dd>{{ result.sha256 }}</dd>
+          </dl>
+
+          {% set c2pa = result.c2pa %}
+          {% if c2pa.checked and c2pa.has_manifest and c2pa.is_valid and c2pa.digital_source_type and ('algorithmic' in c2pa.digital_source_type.lower() or 'synthetic' in c2pa.digital_source_type.lower()) %}
+            <div class="stamp stamp--verified">Terverifikasi<br>AI<small>C2PA valid</small></div>
+          {% elif c2pa.checked and c2pa.has_manifest and not c2pa.is_valid %}
+            <div class="stamp stamp--danger">Tanda Tangan<br>Tidak Valid<small>C2PA rusak</small></div>
+          {% elif c2pa.checked and c2pa.has_manifest %}
+            <div class="stamp stamp--verified">C2PA<br>Valid<small>asal tak tercatat AI</small></div>
+          {% else %}
+            <div class="stamp stamp--caution">Tanpa<br>C2PA<small>belum tentu asli</small></div>
+          {% endif %}
+        </div>
+
+        <p class="summary">{{ result.summary }}</p>
+        <span class="confidence-pill confidence-pill--{{ result.confidence }}">Keyakinan: {{ result.confidence }}</span>
+
+        <ul class="findings">
+          {% for finding in result.findings %}
+            <li class="finding {% if finding.category == 'c2pa' %}finding--c2pa{% endif %}">
+              <p class="finding__title">{{ finding.title }}</p>
+              <p class="finding__meta">{{ finding.category }} · keyakinan {{ finding.confidence }}</p>
+              <p class="finding__detail">{{ finding.detail }}</p>
+            </li>
+          {% endfor %}
+        </ul>
+
+        <div class="limitations">
+          <h2>Batasan analisis ini</h2>
+          <ul>
+            {% for item in result.limitations %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="report-actions">
+          <a href="{{ url_for('index') }}">Analisis file lain</a>
+        </div>
+      </section>
+    {% endif %}
+
+    <footer class="colophon">
+      SiliconFingerprint · tool OSINT defensif untuk edukasi, jurnalisme, dan analisis keamanan.
+      Tidak untuk doxxing, pemerasan, atau menuduh tanpa bukti tambahan.
+    </footer>
+  </div>
+
+  <script>
+    const intake = document.getElementById('intake');
+    const fileInput = document.getElementById('file-input');
+    const filenameDisplay = document.getElementById('filename-display');
+
+    fileInput.addEventListener('change', () => {
+      filenameDisplay.textContent = fileInput.files.length ? fileInput.files[0].name : '';
+    });
+
+    ['dragenter', 'dragover'].forEach((evt) => {
+      intake.addEventListener(evt, (e) => {
+        e.preventDefault();
+        intake.classList.add('is-dragover');
+      });
+    });
+
+    ['dragleave', 'drop'].forEach((evt) => {
+      intake.addEventListener(evt, (e) => {
+        e.preventDefault();
+        intake.classList.remove('is-dragover');
+      });
+    });
+
+    intake.addEventListener('drop', (e) => {
+      const files = e.dataTransfer.files;
+      if (files.length) {
+        fileInput.files = files;
+        filenameDisplay.textContent = files[0].name;
+      }
+    });
+  </script>
+</body>
+</html>

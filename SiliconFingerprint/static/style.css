@@ -1,0 +1,428 @@
+/* SiliconFingerprint — tema "laporan kasus forensik"
+   Palet: paper/ink netral + tiga warna verdict (verified/caution/danger)
+   yang dipinjam dari konvensi stempel dokumen resmi, bukan dekorasi acak. */
+
+:root {
+  --paper: #f1f2ef;
+  --paper-raised: #fbfbfa;
+  --ink: #14181c;
+  --ink-muted: #5b6168;
+  --rule: #c9cdc7;
+  --rule-strong: #9aa19a;
+
+  --verified: #1b6e5b;
+  --verified-bg: #e3f0ea;
+  --caution: #a8631f;
+  --caution-bg: #f6ecda;
+  --danger: #9a3324;
+  --danger-bg: #f5e1db;
+
+  --stamp-navy: #1f3a5f;
+
+  --font-display: "IBM Plex Serif", Georgia, serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", "SF Mono", Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  background-image: radial-gradient(circle at 1px 1px, rgba(20, 24, 28, 0.035) 1px, transparent 0);
+  background-size: 18px 18px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+.wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 48px 24px 80px;
+}
+
+/* ---------- Header / case-file masthead ---------- */
+
+.masthead {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: 18px;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.masthead__case {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.masthead h1 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 2.1rem;
+  margin: 4px 0 6px;
+  letter-spacing: -0.01em;
+}
+
+.masthead p {
+  margin: 0;
+  color: var(--ink-muted);
+  font-size: 0.96rem;
+  max-width: 56ch;
+}
+
+/* ---------- Upload intake ---------- */
+
+.intake {
+  background: var(--paper-raised);
+  border: 1.5px dashed var(--rule-strong);
+  border-radius: 4px;
+  padding: 32px 24px;
+  text-align: center;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.intake.is-dragover {
+  border-color: var(--stamp-navy);
+  background: #eef2f6;
+}
+
+.intake__icon {
+  font-size: 1.6rem;
+  margin-bottom: 8px;
+}
+
+.intake label.button {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 10px 20px;
+  background: var(--stamp-navy);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.92rem;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.intake label.button:hover {
+  background: #16314f;
+}
+
+.intake input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.intake__filename {
+  display: block;
+  margin-top: 10px;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--ink-muted);
+  min-height: 1.2em;
+}
+
+.intake__submit {
+  margin-top: 18px;
+  padding: 10px 28px;
+  background: var(--ink);
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.intake__submit:hover {
+  background: #000;
+}
+
+.intake__hint {
+  margin-top: 14px;
+  font-size: 0.78rem;
+  color: var(--ink-muted);
+}
+
+/* ---------- Error banner ---------- */
+
+.error-banner {
+  margin-top: 20px;
+  border: 1px solid var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+  padding: 12px 16px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+/* ---------- Results / report card ---------- */
+
+.report {
+  margin-top: 40px;
+  animation: rise 0.32s ease both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.report__file-block {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 18px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.report__meta dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  margin-top: 10px;
+}
+
+.report__meta dt:first-child {
+  margin-top: 0;
+}
+
+.report__meta dd {
+  margin: 2px 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.86rem;
+  word-break: break-all;
+}
+
+/* ---------- The stamp (signature element) ---------- */
+
+.stamp {
+  flex-shrink: 0;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.08rem;
+  line-height: 1.22;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  transform: rotate(-6deg);
+  border: 3px double currentColor;
+  padding: 14px;
+  animation: stamp-down 0.36s cubic-bezier(0.2, 0.9, 0.3, 1.2) both;
+  animation-delay: 0.08s;
+}
+
+@keyframes stamp-down {
+  from {
+    opacity: 0;
+    transform: rotate(-6deg) scale(1.4);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-6deg) scale(1);
+  }
+}
+
+.stamp--verified {
+  color: var(--verified);
+  background: var(--verified-bg);
+}
+
+.stamp--caution {
+  color: var(--caution);
+  background: var(--caution-bg);
+}
+
+.stamp--danger {
+  color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.stamp small {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 0.6rem;
+  letter-spacing: 0.03em;
+  margin-top: 7px;
+  text-transform: none;
+  max-width: 110px;
+}
+
+/* ---------- Summary line ---------- */
+
+.summary {
+  font-size: 1.05rem;
+  margin: 0 0 6px;
+}
+
+.confidence-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 2px 9px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
+
+.confidence-pill--tinggi {
+  background: var(--verified-bg);
+  color: var(--verified);
+}
+
+.confidence-pill--sedang {
+  background: var(--caution-bg);
+  color: var(--caution);
+}
+
+.confidence-pill--rendah {
+  background: #e7e8e5;
+  color: var(--ink-muted);
+}
+
+/* ---------- Findings list ---------- */
+
+.findings {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.finding {
+  border-left: 3px solid var(--rule-strong);
+  padding: 4px 0 4px 16px;
+  margin-bottom: 16px;
+}
+
+.finding--c2pa {
+  border-left-color: var(--stamp-navy);
+}
+
+.finding__title {
+  font-weight: 600;
+  font-size: 0.94rem;
+  margin: 0 0 2px;
+}
+
+.finding__meta {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.finding__detail {
+  margin: 4px 0 0;
+  font-size: 0.9rem;
+  color: #2b2f33;
+}
+
+/* ---------- Limitations footer ---------- */
+
+.limitations {
+  margin-top: 32px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--rule);
+  font-size: 0.8rem;
+  color: var(--ink-muted);
+}
+
+.limitations h2 {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--ink-muted);
+  margin: 0 0 8px;
+}
+
+.limitations ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.limitations li {
+  margin-bottom: 4px;
+}
+
+.report-actions {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.report-actions a {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--stamp-navy);
+  text-decoration: none;
+  border: 1px solid var(--rule-strong);
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+.report-actions a:hover {
+  border-color: var(--stamp-navy);
+  background: #eef2f6;
+}
+
+footer.colophon {
+  margin-top: 56px;
+  font-size: 0.76rem;
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+footer.colophon a {
+  color: var(--stamp-navy);
+}
+
+@media (max-width: 540px) {
+  .report__file-block {
+    flex-direction: column;
+  }
+  .stamp {
+    width: 140px;
+    height: 140px;
+    font-size: 0.82rem;
+  }
+}
